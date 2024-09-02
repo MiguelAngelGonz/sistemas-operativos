@@ -1,0 +1,14 @@
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\bin\Debug\net8.0\SistemasOperativos.exe
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\bin\Debug\net8.0\SistemasOperativos.deps.json
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\bin\Debug\net8.0\SistemasOperativos.runtimeconfig.json
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\bin\Debug\net8.0\SistemasOperativos.dll
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\bin\Debug\net8.0\SistemasOperativos.pdb
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\SistemasOperativos.GeneratedMSBuildEditorConfig.editorconfig
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\SistemasOperativos.AssemblyInfoInputs.cache
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\SistemasOperativos.AssemblyInfo.cs
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\SistemasOperativos.csproj.CoreCompileInputs.cache
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\SistemasOperativos.dll
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\refint\SistemasOperativos.dll
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\SistemasOperativos.pdb
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\SistemasOperativos.genruntimeconfig.cache
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\ref\SistemasOperativos.dll
