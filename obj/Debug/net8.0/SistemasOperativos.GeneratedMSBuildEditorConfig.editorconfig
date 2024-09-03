@@ -8,6 +8,6 @@ build_property.PlatformNeutralAssembly =
 build_property.EnforceExtendedAnalyzerRules = 
 build_property._SupportedPlatformList = Linux,macOS,Windows
 build_property.RootNamespace = SistemasOperativos
-build_property.ProjectDir = C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\
+build_property.ProjectDir = /workspaces/sistemas-operativos/
 build_property.EnableComHosting = 
 build_property.EnableGeneratedComInterfaceComImportInterop = 
