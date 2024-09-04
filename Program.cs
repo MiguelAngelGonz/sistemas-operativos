@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Diagnostics; // Necesario para Stopwatch
-using System.Linq; // Necesario para usar LINQ
+using System.Diagnostics;
+using System.Linq;
 using System.Threading;
 
 class Process
@@ -20,36 +20,34 @@ class Process
 
 class MemoryManagement
 {
-    private int[] memoryPartitions; // Arreglo que representa las particiones de memoria
-    private int[] bitMap; // Mapa de bits para el seguimiento de las particiones ocupadas
-    private int[] partitionSizes; // Tamaño de cada partición
-    private string[] partitionMessages; // Mensajes personalizados para cada partición
-    private object lockObj = new object(); // Objeto para el bloqueo de secciones críticas
+    private int[] memoryPartitions;
+    private int[] bitMap;
+    private int[] partitionSizes;
+    private string[] partitionMessages;
+    private object lockObj = new object();
 
     public MemoryManagement(int[] partitionSizes, string[] partitionMessages)
     {
-        Array.Sort(partitionSizes); // Ordenar las particiones de menor a mayor
+        Array.Sort(partitionSizes);
         this.partitionSizes = partitionSizes;
         this.partitionMessages = partitionMessages;
         memoryPartitions = new int[partitionSizes.Length];
         bitMap = new int[partitionSizes.Length];
     }
 
-    // Método para asignar memoria a un proceso
     public int AllocateMemory(Process process)
     {
-        lock (lockObj) // Bloquear para evitar condiciones de carrera
+        lock (lockObj)
         {
-            // Buscar una partición libre en el mapa de bits que pueda alojar el proceso
             for (int i = 0; i < bitMap.Length; i++)
             {
-                if (bitMap[i] == 0 && process.Size <= partitionSizes[i]) // Si el bit es 0 y el tamaño del proceso cabe en la partición
+                if (bitMap[i] == 0 && process.Size <= partitionSizes[i])
                 {
-                    bitMap[i] = 1; // Marcar la partición como ocupada
-                    memoryPartitions[i] = process.Size; // Asignar el proceso a la partición
+                    bitMap[i] = 1;
+                    memoryPartitions[i] = process.Size;
                     process.PartitionIndex = i;
-                    
-                    switch (i) // Usar el índice 'i' para decidir el color
+
+                    switch (i)
                     {
                         case 0:
                             Console.ForegroundColor = ConsoleColor.Red;
@@ -66,18 +64,17 @@ class MemoryManagement
                     }
 
                     Console.WriteLine($"{partitionMessages[i]} Proceso de tamaño {process.Size} asignado a la partición {i} (tamaño de partición: {partitionSizes[i]}) por {process.ExecutionTime} ms.");
-                    Console.ResetColor(); // Restaurar el color después de la impresión
+                    Console.ResetColor();
                     return i;
                 }
             }
-            return -1; // No se encontró una partición adecuada
+            return -1;
         }
     }
 
-    // Método para liberar la memoria ocupada por un proceso
     public void FreeMemory(int partitionIndex)
     {
-        lock (lockObj) // Bloquear para evitar condiciones de carrera
+        lock (lockObj)
         {
             if (partitionIndex < 0 || partitionIndex >= bitMap.Length)
             {
@@ -87,11 +84,10 @@ class MemoryManagement
                 return;
             }
 
-            if (bitMap[partitionIndex] == 1) // Si el bit es 1, la partición está ocupada
+            if (bitMap[partitionIndex] == 1)
             {
-                bitMap[partitionIndex] = 0; // Marcar la partición como libre
-                
-                // Cambiar el color de la consola según la partición que se libera
+                bitMap[partitionIndex] = 0;
+
                 switch (partitionIndex)
                 {
                     case 0:
@@ -107,12 +103,12 @@ class MemoryManagement
                         Console.ForegroundColor = ConsoleColor.Yellow;
                         break;
                     default:
-                        Console.ResetColor(); // Resetear el color en caso de un índice inesperado
+                        Console.ResetColor();
                         break;
                 }
-                
+
                 Console.WriteLine($"Partición {partitionIndex} liberada.");
-                Console.ResetColor(); // Restaurar el color después de la impresión
+                Console.ResetColor();
             }
             else
             {
@@ -123,10 +119,9 @@ class MemoryManagement
         }
     }
 
-    // Método para mostrar el estado actual del mapa de bits
     public void DisplayBitMap()
     {
-        lock (lockObj) // Bloquear para evitar condiciones de carrera
+        lock (lockObj)
         {
             Console.WriteLine("Estado del mapa de bits:");
             for (int i = 0; i < bitMap.Length; i++)
@@ -136,7 +131,6 @@ class MemoryManagement
         }
     }
 
-    // Método para ejecutar el proceso en un hilo separado
     public void RunProcess(Process process)
     {
         while (true)
@@ -144,16 +138,12 @@ class MemoryManagement
             int partitionIndex = AllocateMemory(process);
             if (partitionIndex != -1)
             {
-                // Simular la ejecución del proceso
                 Thread.Sleep(process.ExecutionTime);
-
-                // Liberar la partición después de que el proceso haya terminado
                 FreeMemory(partitionIndex);
                 break;
             }
             else
             {
-                // Esperar un corto período antes de intentar asignar memoria nuevamente
                 Thread.Sleep(50);
             }
         }
@@ -164,27 +154,61 @@ class Program
 {
     static void Main()
     {
-        int[] partitionSizes = { 150, 200, 350, 400 }; // Tamaños de las particiones
+        int[] partitionSizes = { 150, 200, 350, 400 };
         string[] partitionMessages = 
         {
             "Partición pequeña:", 
             "Partición mediana:", 
             "Partición grande:", 
             "Partición extra grande:" 
-        }; // Mensajes personalizados para cada partición
-        int numberOfProcesses = 300; // Número de procesos
+        };
 
         MemoryManagement memoryManager = new MemoryManagement(partitionSizes, partitionMessages);
-        List<Process> processList = new List<Process>();
-        Random random = new Random();
 
-        // Generar 300 procesos con tamaños y tiempos de ejecución aleatorios y agregarlos a la lista
-        for (int i = 0; i < numberOfProcesses; i++)
+        // Definir 40 procesos predefinidos
+        List<Process> processList = new List<Process>
         {
-            int processSize = random.Next(1, 401); // Tamaño aleatorio del proceso entre 1 y 400
-            int executionTime = random.Next(1000, 5000); // Tiempo de ejecución aleatorio en milisegundos
-            processList.Add(new Process(processSize, executionTime));
-        }
+            new Process(50, 2000),
+            new Process(120, 1500),
+            new Process(90, 3000),
+            new Process(200, 2500),
+            new Process(150, 1000),
+            new Process(300, 3500),
+            new Process(170, 1200),
+            new Process(110, 1800),
+            new Process(80, 2200),
+            new Process(60, 1700),
+            new Process(200, 4000),
+            new Process(130, 2300),
+            new Process(100, 1400),
+            new Process(180, 2100),
+            new Process(50, 3000),
+            new Process(90, 2600),
+            new Process(160, 1900),
+            new Process(140, 2400),
+            new Process(120, 1300),
+            new Process(210, 2800),
+            new Process(180, 1500),
+            new Process(170, 3100),
+            new Process(90, 1800),
+            new Process(200, 3500),
+            new Process(100, 1300),
+            new Process(300, 3400),
+            new Process(150, 1700),
+            new Process(160, 2500),
+            new Process(70, 2100),
+            new Process(140, 2700),
+            new Process(110, 1500),
+            new Process(50, 1200),
+            new Process(200, 2300),
+            new Process(90, 3000),
+            new Process(150, 2500),
+            new Process(130, 2800),
+            new Process(120, 3300),
+            new Process(300, 3500),
+            new Process(140, 2900),
+            new Process(180, 3700)
+        };
 
         // Ordenar la lista de procesos por tiempo de ejecución de forma ascendente
         var orderedProcesses = processList.OrderBy(p => p.ExecutionTime);
@@ -192,33 +216,27 @@ class Program
         // Encolar los procesos ordenados
         Queue<Process> processQueue = new Queue<Process>(orderedProcesses);
 
-        // Iniciar el cronómetro
         Stopwatch stopwatch = Stopwatch.StartNew();
 
-        // Ejecutar cada proceso en un hilo separado
         List<Thread> threads = new List<Thread>();
 
         while (processQueue.Count > 0)
         {
-            Process process = processQueue.Dequeue(); // Extraer el proceso de la cola
+            Process process = processQueue.Dequeue();
             Thread thread = new Thread(() => memoryManager.RunProcess(process));
             threads.Add(thread);
             thread.Start();
         }
 
-        // Esperar a que todos los hilos terminen
         foreach (var thread in threads)
         {
             thread.Join();
         }
 
-        // Detener el cronómetro
         stopwatch.Stop();
 
-        // Mostrar el estado final del mapa de bits
         memoryManager.DisplayBitMap();
 
-        // Mostrar el tiempo total de ejecución
         Console.WriteLine($"Tiempo total de ejecución: {stopwatch.ElapsedMilliseconds} ms");
     }
 }
