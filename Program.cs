@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics; // Necesario para Stopwatch
+using System.Linq; // Necesario para usar LINQ
 using System.Threading;
 
 class Process
@@ -75,53 +76,52 @@ class MemoryManagement
 
     // Método para liberar la memoria ocupada por un proceso
     public void FreeMemory(int partitionIndex)
-{
-    lock (lockObj) // Bloquear para evitar condiciones de carrera
     {
-        if (partitionIndex < 0 || partitionIndex >= bitMap.Length)
+        lock (lockObj) // Bloquear para evitar condiciones de carrera
         {
-            Console.ForegroundColor = ConsoleColor.Red;
-            Console.WriteLine("Índice de partición no válido.");
-            Console.ResetColor();
-            return;
-        }
-
-        if (bitMap[partitionIndex] == 1) // Si el bit es 1, la partición está ocupada
-        {
-            bitMap[partitionIndex] = 0; // Marcar la partición como libre
-            
-            // Cambiar el color de la consola según la partición que se libera
-            switch (partitionIndex)
+            if (partitionIndex < 0 || partitionIndex >= bitMap.Length)
             {
-                case 0:
-                    Console.ForegroundColor = ConsoleColor.Red;
-                    break;
-                case 1:
-                    Console.ForegroundColor = ConsoleColor.Green;
-                    break;
-                case 2:
-                    Console.ForegroundColor = ConsoleColor.Blue;
-                    break;
-                case 3:
-                    Console.ForegroundColor = ConsoleColor.Yellow;
-                    break;
-                default:
-                    Console.ResetColor(); // Resetear el color en caso de un índice inesperado
-                    break;
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine("Índice de partición no válido.");
+                Console.ResetColor();
+                return;
             }
-            
-            Console.WriteLine($"Partición {partitionIndex} liberada.");
-            Console.ResetColor(); // Restaurar el color después de la impresión
-        }
-        else
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.WriteLine($"Partición {partitionIndex} ya está libre.");
-            Console.ResetColor();
+
+            if (bitMap[partitionIndex] == 1) // Si el bit es 1, la partición está ocupada
+            {
+                bitMap[partitionIndex] = 0; // Marcar la partición como libre
+                
+                // Cambiar el color de la consola según la partición que se libera
+                switch (partitionIndex)
+                {
+                    case 0:
+                        Console.ForegroundColor = ConsoleColor.Red;
+                        break;
+                    case 1:
+                        Console.ForegroundColor = ConsoleColor.Green;
+                        break;
+                    case 2:
+                        Console.ForegroundColor = ConsoleColor.Blue;
+                        break;
+                    case 3:
+                        Console.ForegroundColor = ConsoleColor.Yellow;
+                        break;
+                    default:
+                        Console.ResetColor(); // Resetear el color en caso de un índice inesperado
+                        break;
+                }
+                
+                Console.WriteLine($"Partición {partitionIndex} liberada.");
+                Console.ResetColor(); // Restaurar el color después de la impresión
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Cyan;
+                Console.WriteLine($"Partición {partitionIndex} ya está libre.");
+                Console.ResetColor();
+            }
         }
     }
-}
-
 
     // Método para mostrar el estado actual del mapa de bits
     public void DisplayBitMap()
@@ -175,16 +175,22 @@ class Program
         int numberOfProcesses = 300; // Número de procesos
 
         MemoryManagement memoryManager = new MemoryManagement(partitionSizes, partitionMessages);
-        Queue<Process> processQueue = new Queue<Process>();
+        List<Process> processList = new List<Process>();
         Random random = new Random();
 
-        // Generar 300 procesos con tamaños y tiempos de ejecución aleatorios y agregarlos a la cola
+        // Generar 300 procesos con tamaños y tiempos de ejecución aleatorios y agregarlos a la lista
         for (int i = 0; i < numberOfProcesses; i++)
         {
             int processSize = random.Next(1, 401); // Tamaño aleatorio del proceso entre 1 y 400
             int executionTime = random.Next(1000, 5000); // Tiempo de ejecución aleatorio en milisegundos
-            processQueue.Enqueue(new Process(processSize, executionTime));
+            processList.Add(new Process(processSize, executionTime));
         }
+
+        // Ordenar la lista de procesos por tiempo de ejecución de forma ascendente
+        var orderedProcesses = processList.OrderBy(p => p.ExecutionTime);
+
+        // Encolar los procesos ordenados
+        Queue<Process> processQueue = new Queue<Process>(orderedProcesses);
 
         // Iniciar el cronómetro
         Stopwatch stopwatch = Stopwatch.StartNew();
