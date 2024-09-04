@@ -12,3 +12,4 @@ C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\refin
 C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\SistemasOperativos.pdb
 C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\SistemasOperativos.genruntimeconfig.cache
 C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\ref\SistemasOperativos.dll
+C:\servidor\htdocs\Sistemas operativos\SistemasOperativos\obj\Debug\net8.0\SistemasOperativos.sourcelink.json
